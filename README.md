@@ -52,10 +52,14 @@ Instructions for compiling and setting up ANTs can be found here:
 https://github.com/ANTsX/ANTs/wiki/Compiling-ANTs-on-Linux-and-Mac-OS
 
 
-### FSL Installation
-The script also uses some generic functions from FSL, which can be called after installation of FSL, as detailed here:
-
+### FSL
+The script also uses some generic functions from FSL. Instructions for installing FSL can be found here:
 https://fsl.fmrib.ox.ac.uk/fsl/fslwiki/FslInstallation
+
+
+### Spinal Cord Toolbox
+The spinal cord processing script also uses some functions from Spinal Cord Toolbox (SCT). Instructions for installing SCT can be found here:
+https://spinalcordtoolbox.com/user_section/installation.html
 
 
 ### dcm2niix
