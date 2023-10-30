@@ -53,6 +53,31 @@ function SockeyeCluster_CALIPR_Philips_Brain_FullProcess(fulldat_names)
 	% apptainer exec --fakeroot /project/st-kolind-1/ken-arc/cbh-b-tools.sif /opt/spinalcordtoolbox/bin/sct_deepseg_sc
 
 
+	% ------------------------------------------------------------------------------  SETUP COMPUTE CLUSTER FOR MATLAB
+	% REQUIRED SETTINGS
+	
+	% Connect:
+	>> c = parcluster;
+	% Specify our allocation (!Required):
+	>> c.AdditionalProperties.AllocationCode = 'st-kolind-1';
+
+	% OPTIONAL SETTINGS
+	% Specify number of GPUs and memory
+	>> c.AdditionalProperties.GpuMem = '32gb';
+	>> c.AdditionalProperties.GpusPerNode = 1;
+	% Specify job placement flexibility (in this case each worker can run on any node, not requiring a specific one):
+	>> c.AdditionalProperties.JobPlacement = 'free';
+	>> c.AdditionalProperties.RequireExclusiveNode = false;
+	% Specify memory to use for MATLAB jobs, per core
+	% Max 24 CPU cores and 192GB RAM (8GB/core)
+	>> c.AdditionalProperties.MemUsage = '6000mb'
+	% Request 24 procs per node (instead of default 8)
+	>> c.AdditionalProperties.ProcsPerNode = 24;
+	% Specify the walltime (e.g. 1 Hour)
+	% >> c.AdditionalProperties.WallTime = '01:00:00';
+
+	% NOTE: To save changes after modifying AdditionalProperties for the above changes to persist between MATLAB sessions.
+	% >> c.saveProfile
 
 
 	% ------------------------------------------------------------------------------  SETUP DEPENDENCIES
