@@ -1,16 +1,14 @@
-function SockeyeCluster_CALIPR_Philips_Brain_FullProcess(fulldat_names)
+function SockeyeCluster_CALIPR_Philips_Cord_FullProcess(fulldat_names)
 	%%%%%%% 
 	% Input is a cell array containing strings with the full path to the .raw data file to be processed
 	% Example:
 	% 	fulldat_names = {...
-	% 	'/home/bizon/Research/MWI_Development/CALIPR/CALIPR_Publication_Share/CALIPR_Code/test_calipr_repro_c05_calipr_brain_1.raw',...
-	% 	'/home/bizon/Research/MWI_Development/Data/Wilman_D_YEG/Wilman_D_YEG_calipr_brain_1.raw',...
+	%     '/home/bizon/Research/MWI_Development/CALIPR/CALIPR_Publication_Share/CALIPR_Code/test_calipr_repro_c05_calipr_cord_1.raw',...
 	% 	};
-	% 	CALIPR_Philips_Brain_FullProcess( fulldat_names );
+	% 	CALIPR_Philips_Cord_FullProcess( fulldat_names );
 	% Or input directly as:
-	% 	CALIPR_Philips_Brain_FullProcess( {...
-	% 	'/home/bizon/Research/MWI_Development/CALIPR/CALIPR_Publication_Share/CALIPR_Code/test_calipr_repro_c05_calipr_brain_1.raw',...
-	% 	'/home/bizon/Research/MWI_Development/Data/Wilman_D_YEG/Wilman_D_YEG_calipr_brain_1.raw',... 
+	% 	CALIPR_Philips_Cord_FullProcess( {...
+	%     '/home/bizon/Research/MWI_Development/CALIPR/CALIPR_Publication_Share/CALIPR_Code/test_calipr_repro_c05_calipr_cord_1.raw',...
 	% 	} );
 
 
@@ -94,8 +92,9 @@ function SockeyeCluster_CALIPR_Philips_Brain_FullProcess(fulldat_names)
 	% ------------------------------------------------------------------------------ INPUTS 
 
 	% fulldat_names = {...
-	% '/home/bizon/Research/MWI_Development/CALIPR/CALIPR_Publication_Share/CALIPR_Code/test_calipr_repro_c05_calipr_brain_1.raw',...
-	% '/home/bizon/Research/MWI_Development/Data/Wilman_D_YEG/Wilman_D_YEG_calipr_brain_1.raw',...
+	% '/home/bizon/Research/MWI_Development/CALIPR/CALIPR_Publication_Share/CALIPR_Code/test_calipr_repro_c05_calipr_cord_1.raw',...
+	% % '/home/bizon/Research/MWI_Development/CALIPR/CALIPR_Publication_Share/CALIPR_Code/test_calipr_repro_c05_calipr_brain_1.raw',...
+	% % '/home/bizon/Research/MWI_Development/Data/Wilman_D_YEG/Wilman_D_YEG_calipr_brain_1.raw',...
 	% };
 
 
@@ -114,43 +113,41 @@ function SockeyeCluster_CALIPR_Philips_Brain_FullProcess(fulldat_names)
 	% ----------
 
 	% --------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-	% ------------------------------------------------------------------------------ BRAIN RECON
+	% ------------------------------------------------------------------------------ CORD RECON
 	% clear MR Eall Eksp Etmp
 	% datids = [ 1 ]; espids = [ 1 ]; % 3 1 8 6  datids = [ 1 2 3 4 5 6 7 8 9 ]; espids = [ 1 ];
 
-	load_data=0;
+	load_data=1;
 	ZeroFill = 'Yes'; % 'Yes', 'No'
 	use_bartPW = 1;
 
-	run_espirit=0;
+	run_espirit=1;
 
-	run_CSrecon = 0;
+	run_CSrecon = 1;
 	save_cs_nii = 1;
 
 	% run_SCrecon = 0;
 
-	run_CALIPRrecon = 0;
+	run_CALIPRrecon = 1;
 	save_calipr_nii = 1;
 
-	analyseMWI = 0;
+	analyseMWI = 1;
 	save_mwi_nii = 1;
 
 
-	% -------------------------------------------------------------------- BRAIN
+	% -------------------------------------------------------------------- CORD
 
-	% ---------------------------------- W Zerofill 240x200x122
-	% recon_slices = 119:122; view_slice = 3; batchsize = 4;% 4 slices
-	% recon_slices = 120:121; view_slice = 2;  % 2 slices
-	% recon_slices = 119:122; view_slice = 3;  % 4 slices
-	% recon_slices = 109:132; view_slice = 13;  % 24 slices
-	% recon_slices = 99:142; view_slice = 23;  % 44 slices
-	% recon_slices = 1:240; view_slice = 124;  batchsize = 6;% ALL 240 slices, batchsize 6 -> 40 batches
-	recon_slices = 1:240; view_slice = 124;  batchsize = 24;% ALL 240 slices, batchsize 24 -> 10 batches  USED FOR ALL CALIPR_REPRO RECONS
-	% recon_slices = 1:160; view_slice = 80;  batchsize = 20;% ALL 240 slices, batchsize 24 -> 10 batches  USED FOR CALIPR_GEMATCH RECONS
-	% recon_slices = 1:240; view_slice = 124;  batchsize = 30;% ALL 240 slices, batchsize 30 -> 8 batches
-	% Total Memory During Temporal MWI Analysis: 110Gb/81% (for total entire image, processing within entire threshmask, 24 workers, clear Eall etc before, nT2 40)
-	% Total Memory During Spatial MWI Analysis: ?Gb/?% (for total entire image, processing within entire threshmask, 24 workers, clear Eall etc before, nT2 40, DSW 10x10x10)
-
+	% ----------------------------------
+	% recon_slices = 144:145; view_slice = 2;
+	recon_slices = 1:288; view_slice = 145;  batchsize = 72;% ALL 288 slices, batchsize 72 -> 4 batches, USED FOR ALL CALIPR_REPRO RECONS, ~11Gb GPU w/ 2 ESPIRiT maps. 
+	% recon_slices = 104:185; view_slice = 42; % 82 slices GPU 11.4Gb w/ 2 ESPIRiT maps
+	% recon_slices = 114:175; view_slice = 32; batchsize = 22;% 62 slices GPU 5.8Gb w/ 2 ESPIRiT maps
+	% recon_slices = 124:165; view_slice = 22; % 42 slices GPU 5.8Gb w/ 2 ESPIRiT maps
+	% recon_slices = 134:155; view_slice = 12; % 22 slices GPU 5.8Gb w/ 2 ESPIRiT maps
+	% recon_slices = 130:159; view_slice = 16; % 30 slices GPU 5.8Gb w/ 2 ESPIRiT maps
+	% recon_slices = 139:150; view_slice = 7; % 12 slices
+	% recon_slices = 134:147; view_slice = 6; % 14 slices, centred around cord
+	% METRICS_CALIPR 160x116x160
 
 
 
@@ -160,7 +157,7 @@ function SockeyeCluster_CALIPR_Philips_Brain_FullProcess(fulldat_names)
 	% ----
 
 	espirit_cmds = {...
-	'ecalib -d 0 -r 16 -S -a ',... % -d 0 for quiet version
+	'ecalib -d 0 -k 0:6:4 -S -a ',... % FOR CORD, -d 0 for quiet version
 	};
 
 
@@ -168,57 +165,19 @@ function SockeyeCluster_CALIPR_Philips_Brain_FullProcess(fulldat_names)
 	print_output = 0;
 	echoes2show = [ ]; % [ 1 4 10 28 ]
 	show_coeff = 1;
-	imwindow = [ 0 0.020 ]; % [ 0 0.018 ] [0 900]
+	imwindow = [ 0 0.030 ]; % [ 0 0.018 ] [0 900]
 	ax_shift = 0; % shift all axial slices up or down
-	view_slices_ax = round(1.7*[ 12, 15, 18, 24, 32 ]); %  [ 3, 4, 6, 8, 10 ] [ 4, 6, 8, 10, 12 ] [ 8, 12, 16, 20, 24 ] [ 6, 8, 10, 12, 14 ] [ 28, 44, 60, 76, 92 ] % which 5 axial slices to view
+	view_slices_ax = 2*[ 4, 6, 8, 10, 12 ]; %  [ 3, 4, 6, 8, 10 ] [ 4, 6, 8, 10, 12 ] [ 8, 12, 16, 20, 24 ] [ 6, 8, 10, 12, 14 ] [ 28, 44, 60, 76, 92 ] % which 5 axial slices to view
 	calc_error = 0;
 	% echoes2save = [ 1 ]; %  [ 1 7 14 21 28 56 ];
 	% --------------------------------- PREP RECON
-	% calipr_cmd_pics = 'pics -R W:70:0:0.1 -i 100 -e -d 5 -S -g '; % FOR OVERWRITING
-	%         cs_cmd_pics = 'pics -R W:6:0:0.005 -i 250 -e -d 4 -S -H -g '; % was 250 FOR OVERWRITING
-	%         cs_cmd_pics = 'pics -R W:6:0:0.005 -i 100 -e -d 4 -S -H '; %
-	%         cs_cmd_pics = 'pics -R W:6:0:0.0001 -i 250 -e -d 4 -S -H -g'; % 
-	% cs_cmd_pics = 'pics -R W:6:0:0.002 -i 250 -e -d 4 -S -H -g '; % 
-	% cs_cmd_pics = 'pics -R W:6:0:0.0004 -i 250 -e -d 4 -S -H -g'; % 
-	cs_cmd_pics = 'pics -R W:6:0:0.004 -i 250 -e -d 4 -S -H -g'; % USED FOR CALIBRATION FOR ALL CALIPR_REPRO BRAIN CS RECONS
-	% cs_cmd_pics = 'pics -R W:6:0:0.01 -i 250 -e -d 4 -S -H -g'; % USED FOR CALIPR_GEMATCH RECONS
-	% cs_cmd_pics = 'pics -R W:6:0:0.4 -i 1 -e -d 4 -S '; % 
-	% cs_cmd_pics = 'pics -R W:6:0:0.0005 -i 250 -e -d 4 -S -H -g'; % 
+	cs_cmd_pics = 'pics -R W:6:0:0.002 -i 250 -e -d 4 -S -H -g'; % USED FOR CALIBRATION FOR ALL CALIPR_REPRO CORD CS RECONS
 
-	%         cs_cmd_pics = 'pics -R W:6:0:0.05 -i 250 -e -d 4 -S -H -g'; % 
-	%         cs_cmd_pics = 'pics -l1 0.005 -i 250 -e -d 4 -S -H -g '; % 
-	%         cs_cmd_pics = 'pics -i 1 -e -d 5 -S -H -g '; % 
-	%         cs_cmd_pics = 'pics -R W:6:0:0.01 -i 100 -w 1269 -e -d 5 -S -H -g '; % TESTING
-	%         cs_cmd_pics = 'pics -R T:6:0:0.1 -i 100 -w 1269 -e -d 5 -S -H -g '; % TESTING
-	%         cs_cmd_pics = 'pics -R W:6:0:0.005 -i 100 -e -d 5 -S -H -g '; % TESTING
-	% calipr_cmd_pics = 'pics -R W:6:0:0.1 -i 30 -e -d 5 -S -g '; % FOR OVERWRITING
 	ALL_cmd_pics = {...
-	% -------------------- CALIPR Oct22 loop
+	% 'pics -R W:6:0:0.0008 -i 250 -e -d 4 -S -H -g ',...
+	'pics -R W:6:0:0.0010 -i 250 -e -d 4 -S -H -g ',... % USED FOR ALL CALIPR_REPRO BRAIN CALIPR RECONS
 	% 'pics -R W:6:0:0.0020 -i 250 -e -d 4 -S -H -g ',...
-	'pics -R W:6:0:0.0040 -i 250 -e -d 4 -S -H -g',... % USED FOR ALL CALIPR_REPRO BRAIN CALIPR RECONS
-	% 'pics -R W:6:0:0.0100 -i 250 -e -d 4 -S -H -g',... % USED FOR ALL CALIPR_GEMATCH RECONS
-	% 'pics -R W:6:0:0.0200 -i 250 -e -d 4 -S -H -g',... % USED FOR ALL CALIPR_GEMATCH RECONS
-	% 'pics -R W:6:0:0.0008 -i 250 -e -d 4 -S -H -g',...
-	% 'pics -R W:6:0:0.0060 -i 250 -e -d 4 -S -H -g',...
-	% 'pics -R W:6:0:0.0004 -i 250 -e -d 4 -S -H -g',...
-	% 'pics -R W:6:0:0.0080 -i 250 -e -d 4 -S -H -g',...
-	% 'pics -R W:6:0:0.0100 -i 250 -e -d 4 -S -H -g',...
-	% 'pics -R W:6:0:0.0200 -i 250 -e -d 4 -S -H -g',...
-	% 'pics -R W:6:0:0.0001 -i 250 -e -d 4 -S -H -g',...
-	% --------------------
-	% 'pics -R W:6:0:0.1 -i 100 -e -d 5 -S -g -H ',... % DEFINITELY BETTER! Identical with/without -e
-	% 'pics -R W:6:0:0.1 -i 30 -e -d 5 -S -g ',...
-	% 'pics -R W:6:0:0.1 -i 100 -e -d 5 -S -g ',...
-	% TRIED:
-	% 'pics -R L:6:6:0.1 -i 30 -e -d 5 -S ',... % Note: would not run on GPU
-	% 'pics -R W:6:0:0.1 -R L:6:6:0.1 -i 30 -e -d 5 -S -b 12',...
-	% 'pics -R L:6:6:0.1 -i 30 -e -d 5 -S -b 12 -N',... % takes absolutely ages, had to kill
-	% 'pics -R M:6:6:0.1 -i 30 -e -d 5 -S ',... % ERROR would not run
-	% 'pics -R W:70:0:0.1 -i 100 -e -d 5 -S -g ',... % Makes coefficient images super noisy for SpatTemp, but weirdly WAY BETTER with SpatOnly sampling
-	% 'pics -R W:6:64:0.1 -i 100 -e -d 5 -S -g ',...
-	% 'pics -R W:6:8192:0.1 -i 100 -e -d 5 -S -g ',...
-	% 'pics -R W:6:6:0.1 -i 100 -e -d 5 -S -g ',... % ERROR will not run
-	% 'pics -R W:6:0:0.1 -i 100 -e -d 5 -S -g -a',... % ERROR will not run
+	% 'pics -R W:6:0:0.0040 -i 250 -e -d 4 -S -H -g ',...
 	};
 	% --------------------------------- PREP SC BASIS
 	% TEMPORARY
@@ -238,8 +197,8 @@ function SockeyeCluster_CALIPR_Philips_Brain_FullProcess(fulldat_names)
 	show_threshold = 1;
 	show_subspace = 1;
 	show_sig_evol = 1;
-	thresh = 1/15 % BRAIN threshold at fraction of max intensity voxel
-	% thresh = 1/25 % CORD threshold at fraction of max intensity voxel
+	% thresh = 1/15 % BRAIN threshold at fraction of max intensity voxel
+	thresh = 1/25 % CORD threshold at fraction of max intensity voxel
 	maxN = 25000000; % maximum number of unique signal evolutions to use for SVD
 	maxN_disp = 50; % maximum number of unique signal evolutions to display
 	% --------------------------------- FINAL OPTIONS NOT OFTEN CHANGED
@@ -249,15 +208,15 @@ function SockeyeCluster_CALIPR_Philips_Brain_FullProcess(fulldat_names)
 	apply_mat_mask = 0;
 	mask_borderpad = 2; % depth to fill then cut in mask creation
 	% ----- NEW DK MWI params -----
-	Resol = [1.000, 1.000, 1.000]; % [0.625, 0.625, 2.5] [1.0, 1.0, 5.0] cord with ZF [1.0, 1.0, 2.0] [2.0, 2.0, 2.0]
-	TE=0.006000; % 0.008720, 0.007168, 0.007000
+	Resol = [0.625, 0.625, 2.500]; % [0.625, 0.625, 2.5] [1.0, 1.0, 5.0] cord with ZF [1.0, 1.0, 2.0] [2.0, 2.0, 2.0]
+	TE=0.008000; % 0.008720, 0.007168, 0.007000
 	TR=1.252; % 1.013, 1.667, 1.120, 1.306
-	T2Range=[0.00400,10.00000]; % 0.00600, 0.00500
+	T2Range=[0.00600,10.00000]; % 0.00600, 0.00500
 	spwin = [0.00000; 0.04000]; % 0.00100; 0.04000
 	mpwin=[0.04000,0.20000]; % [0.04000,0.20000]
 	nT2=40; % 120
 	nCores=12; % 30 -> ?% of CPU
-	nThreads=24; % 30 -> ?% of CPU
+	nThreads=30; % 30 -> ?% of CPU
 	FAE_in_fin_step = [0, 50, 1];
 	RegType='Both'; % 'Both', 'Temporal-Only', 'Spatial-Only'
 	nSpatIter=2;
@@ -270,7 +229,7 @@ function SockeyeCluster_CALIPR_Philips_Brain_FullProcess(fulldat_names)
 	% Initial values for determining muS (spatial regularizatio const for T2 dist. map) 
 	SpatReg_Init_T2=[10, 100, 200, 350, logspace(log10(5e2), log10(3.5e3), 10), 5e3, 1e4];    % [100, 200, 500, 1000, 2000, 4000, 7500, 10000];
 	% ----- Not inputs for analysis, used afterwards
-	scale_MWF = [ 0 0.20 ];
+	scale_MWF = [ 0 0.70 ];
 	scale_ALPHA = [ 120 180 ];
 	% --------------------------------- 
 	% % ----- Set extra PM MWI params -----
@@ -303,18 +262,18 @@ function SockeyeCluster_CALIPR_Philips_Brain_FullProcess(fulldat_names)
 	% ---------------------------------- VERSION 2.0 GROUPWISE  IMPORT, HARDWARE CORRECT with ENTIRE dataset (all echoes) at once
 	for dat_id = 1:length(fulldat_names)
 	    tic
-	    
+
 	    [ subject_dir dat_name dat_extension ] = fileparts(fulldat_names{dat_id});
 	    subject_dir = [ subject_dir '/' ];
 	    out_dir = [ subject_dir dat_name '/' ];
-	    
+
 	    mkdir(out_dir)
 	    cd(out_dir);
-	    
+
 	    out_dir_appended = [ out_dir 'ProUS/']
 	    mkdir(out_dir_appended)
 	    out_textfile = [ out_dir 'Output_CALIPR_ProUS_Cord_ECCENTRIC_DEV10.txt']; 
-	    
+
 	    % ----- For saving output
 	    disp('Starting subject:')
 	    pwd
@@ -336,7 +295,7 @@ function SockeyeCluster_CALIPR_Philips_Brain_FullProcess(fulldat_names)
 	    datname_slice_prefix = [ out_dir 'Slices/' dat_name '_bPW' num2str(use_bartPW) '_zf' ZeroFill '_wK2IM_CC0' ]; % appended with _x60.mat etc
 	    datname_slice_wCC_prefix = [ out_dir 'Slices/' dat_name '_bPW' num2str(use_bartPW) '_zf' ZeroFill '_wK2IM_CC1' ]; % appended with _x60.mat etc
 	    datname_echo_prefix = [ out_dir 'Echoes/' dat_name '_bPW' num2str(use_bartPW) '_zf' ZeroFill '_wK2IM_CC0' ]; % appended with _x60.mat etc
-	    
+
 
 	    % ----------------------------------------------------------------------------------------------------------------------------------------
 	    % ---------------------------------------------------------------------------------------------------------------------------------------- HW Correct
@@ -370,19 +329,19 @@ function SockeyeCluster_CALIPR_Philips_Brain_FullProcess(fulldat_names)
 	            save(noisefile, 'noisedat');
 	            clearvars noisedat
 	        end
-	        
+
 	        mkdir([ out_dir 'Echoes/' ]);
-	        
-	        
+
+
 	        for eid = 1:nEchoes
 	            MR.Parameter.Reset;
-	            
+
 	            MR.Parameter.Parameter2Read.typ = [ 1 ]; % read in standard data (1) phase correction data (3) noise data (5)
 	            MR.Parameter.Parameter2Read.echo = [ eid-1 ]; % only read in only some echoes   format: [ 0; 1; 2 ];
 	            MR.Parameter.Parameter2Read.Update;
-	            
+
 	%             disp('tmp')
-	            
+
 	%             %%%%% For brain reference scan: zerofill to 1mm (160 x 128 x 80 -> 240 x 200 x 122)
 	%             MR.Parameter.Encoding.XRes = 240+zeros(nEchoes,1);
 	%             MR.Parameter.Encoding.XReconRes = 240+zeros(nEchoes,1);
@@ -390,18 +349,18 @@ function SockeyeCluster_CALIPR_Philips_Brain_FullProcess(fulldat_names)
 	%             MR.Parameter.Encoding.YReconRes = 200+zeros(nEchoes,1);
 	%             MR.Parameter.Encoding.ZRes = 122+zeros(nEchoes,1);
 	%             MR.Parameter.Encoding.ZReconRes = 122+zeros(nEchoes,1);
-	            
+
 	%             %%%%% For cord reference scan: zerofill slice by factor of 2, to 2.5mm slices(6 -> 12)
 	%             MR.Parameter.Encoding.ZRes = 12+zeros(nEchoes,1);
 	%             MR.Parameter.Encoding.ZReconRes = 12+zeros(nEchoes,1);
-	            
+
 	%             %%%%% For all cord CALIPR scans: zerofill slice by factor of 2, to 2.5mm slices(16 -> 32)
 	%             %%%%% OR alternatively, zerofill in recon code after loading (to reduce saved data size)
 	%             MR.Parameter.Encoding.ZRes = 32+zeros(nEchoes,1);
 	%             MR.Parameter.Encoding.ZReconRes = 32+zeros(nEchoes,1);
 
 	%             disp('tmp2')
-	            
+
 	            MR.Parameter.Recon.kSpaceZeroFill = ZeroFill;
 	            MR.Parameter.Recon.UseMatlabInternals = 'Yes';
 
@@ -502,7 +461,7 @@ function SockeyeCluster_CALIPR_Philips_Brain_FullProcess(fulldat_names)
 	%             save(tmpname, 'tmp_echo','-v7.3', '-nocompression'); % save(tmpname, 'tmp_echo','-v7.3'); % ?FASTER new matlab file format, ensure compression not an issue
 	% %             clear tmpname tmp_echo
 	            % -----
-	            
+
 	            % ---------------------------------------------------- PERFORM COIL COMPRESSION AND SAVE
 	            if run_CC == 1
 	                if eid == 1
@@ -541,40 +500,40 @@ function SockeyeCluster_CALIPR_Philips_Brain_FullProcess(fulldat_names)
 	            %         disp(sprintf('Echo %u',eid))
 	                end
 	            end
-	            
+
 	        end
-	        
+
 	        disp('Done echo-by-echo hardware correct and coil compression')
 	        toc
-	        
+
 	        size(Eall)
 
-	% %         % ---------------------------------------------------- SAVE ALL TOGETHER
-	% %         save(datname_wCC_Eall, 'Eall','-v7.3', '-nocompression');
-	% %         disp('Saved all echoes together')
+	%         % ---------------------------------------------------- SAVE ALL TOGETHER
+	%         save(datname_wCC_Eall, 'Eall','-v7.3', '-nocompression');
+	%         disp('Saved all echoes together')
 
-	%         % ---------------------------------------------------- SAVE SLICES
-	%         mkdir([ out_dir 'Slices/' ]);
+	        % ---------------------------------------------------- SAVE SLICES
+	        mkdir([ out_dir 'Slices/' ]);
 
-	%         for x_id = 1:size(Eall,1)
-	%             tmpname = [ datname_slice_wCC_prefix sprintf('_x%u.mat',x_id) ];
-	%             tmp_slice = squeeze(Eall(x_id,:,:,:,:,:,:));
+	        for x_id = 1:size(Eall,1)
+	            tmpname = [ datname_slice_wCC_prefix sprintf('_x%u.mat',x_id) ];
+	            tmp_slice = squeeze(Eall(x_id,:,:,:,:,:,:));
 
-	%             save(tmpname, 'tmp_slice');
-	%         %     disp(sprintf('Slice %u',x_id))
-	%             clear tmpname tmp_slice
-	%         end
+	            save(tmpname, 'tmp_slice');
+	        %     disp(sprintf('Slice %u',x_id))
+	            clear tmpname tmp_slice
+	        end
 
 	        disp('Done saving coil compressed slices')
 	        dat_name
 	        toc
 	    end
-	    
-	    
+
+
 	    % ----------------------------------------------------------------------------------------------------------------------------------------
 	    % ---------------------------------------------------------------------------------------------------------------------------------------- Reconstruction and Analysis
 	    % ----------------------------------------------------------------------------------------------------------------------------------------
-	    
+
 	    if load_data == 1
 	        clear USdat FSsensmaps T2_dist_4D_Temporal UScalipr UScalipr_ALPHA UScalipr_MWF USfft USfft_norm pics_mas_8ch
 	        % ------------------------------------------------------------------ LOAD USdat
@@ -618,14 +577,14 @@ function SockeyeCluster_CALIPR_Philips_Brain_FullProcess(fulldat_names)
 	%         Eall = bart('resize -c 2 120', Eall);
 	        % --------
 	%         Eall = bart('resize -c 2 75', Eall);
-	        
+
 	%         % -------- ZEROFILL SLICE DIRECTION FOR 1MM ISOTROPIC VERSION (ZF NO)
 	%         Eall = bart('resize -c 2 74', Eall);
 	%         % --------
 	%         Eall = bart('resize -c 2 20', Eall);
 	%         Eall = bart('resize -c 2 15', Eall);
 	%         Eall = bart('resize -c 2 16', Eall);
-	%         Eall = bart('resize -c 2 32', Eall);
+	        Eall = bart('resize -c 2 32', Eall); % FOR CORD, AFTER LOADING ZEROFILL TO 2.5mm SLICES
 	%         Eall = bart('resize -c 2 10', Eall);
 	%         % -------- 0.625 isotropic 120x10 -> 240x80
 	%         Eall = bart('resize -c 1 240 2 20', Eall);
@@ -639,7 +598,7 @@ function SockeyeCluster_CALIPR_Philips_Brain_FullProcess(fulldat_names)
 	    USdat = single(Eall);
 	    Eall = single(Eall);
 	    size(USdat)
-	    
+
 	%     for espid = espids
 	%     for espid = 1:length(espiritfiles)
 	%         espiritfile = espiritfiles{espid};
@@ -678,22 +637,22 @@ function SockeyeCluster_CALIPR_Philips_Brain_FullProcess(fulldat_names)
 	%             Eksp = bart('fft 4', bart('fft -i 4', Eksp)); % FAKE k-space in slice direction with fft
 	            % ---
 	%             Eksp = bart('resize -c 1 20 2 10', Eksp); 
-	 
-	 
+
+
 	            [ sensmaps espirit_eigenvals ] = bart(espirit_cmd, Eksp(1,:,:,:,:));
 	%             evalc('[ sensmaps espirit_eigenvals ] = bart(espirit_cmd, Eksp(1,:,:,:,:));'); % quiet version
 	            for x_id = 2:length(recon_slices)
 	    %             [ sensmaps(x_id,:,:,:,:) espirit_eigenvals ] = bart(espirit_cmd, Eksp(x_id,:,:,:,:));
 	                evalc('[ sensmaps(x_id,:,:,:,:) espirit_eigenvals ] = bart(espirit_cmd, Eksp(x_id,:,:,:,:));');
 	            end
-	            
+
 	%             size(sensmaps)
 	%             sensmaps = bart('fft 4', bart('resize -c 1 118 2 72', bart('fft -i 4', sensmaps)));
 	%             size(sensmaps)
-	            
-	            
+
+
 	            % --------------------------------- CALCULATE SENSEMAPS WITH DIRECT FFT OR CALDIR METHOD
-	            
+
 	%             % --- Crop k-space if desired
 	%             Eksp = bart('resize -c 1 118 2 72', bart('resize -c 1 8 2 8', Eksp));
 	% %             Eksp = bart('resize -c 1 236 2 30', bart('resize -c 1 16 2 10', Eksp));
@@ -702,20 +661,20 @@ function SockeyeCluster_CALIPR_Philips_Brain_FullProcess(fulldat_names)
 	%             % --- Calculate
 	%             sensmaps = bart('fft -i -u 6', Eksp(:,:,:,:)) ./ bart('rss 8', bart('fft -i -u 6', Eksp(:,:,:,:)));
 	% %             sensmaps = bart('fft -i -u 6', Eksp(:,:,:,:)) ./ abs(bart('rss 8', bart('fft -i -u 6', Eksp(:,:,:,:))));
-	            
+
 	%             % --- CALDIR
 	%             Eksp = bart('fft -u 1', Eksp);
 	% %             Eksp = bart('resize -c 0 42 1 160 2 30', bart('resize -c 0 8 1 8 2 8', Eksp));
 	%             Eksp = bart('resize -c 1 160 2 30', bart('resize -c 1 8 2 8', Eksp));
-	        
+
 	%             sensmaps = bart('caldir 30:8:8 ', Eksp);
-	            
+
 	            toc
 	            disp('Sensemaps generated')
-	            
+
 	            % SINGLE
 	            sensmaps = single(sensmaps);
-	            
+
 	            size(sensmaps)
 
 	            % ---------------------------------- VIEW MAPS
@@ -741,7 +700,7 @@ function SockeyeCluster_CALIPR_Philips_Brain_FullProcess(fulldat_names)
 	%         out_textfile = [ out_dir 'Output_CALIPR_ProUS_Cord_ECCENTRIC_DEV10.txt']; 
 	        USmasks_str = [ dat_name '_bPW' num2str(use_bartPW) '_zf' ZeroFill '_' sprintf('%s%u',calibrate_dat,calibrate_datamatch) espiritfile ];
 	        out_info = [];
-	        
+
 
 	        % ----------------------------------------------------------------------------------------------------------
 
@@ -762,7 +721,7 @@ function SockeyeCluster_CALIPR_Philips_Brain_FullProcess(fulldat_names)
 
 	        batchsize
 	        nbatches = length(recon_slices)/batchsize
-	        
+
 	        % ------------------------------------------------ BEGINLOOP ------------------------------------------------
 	        % over the different acceleration factors
 	        for R_id = R_ids % 1 % 3:4  or 1:size(USmasks,5)  to do all
@@ -775,11 +734,11 @@ function SockeyeCluster_CALIPR_Philips_Brain_FullProcess(fulldat_names)
 	                mkdir( out_dir_appended );
 	                mkdir( out_dir_appended + string(cmd_mas) );
 	                cd( out_dir_appended + string(cmd_mas) );
-	                
+
 	                % get accel info
 	%                 Rfactor = size(USdat,1)*size(USdat,2)/2*size(USdat,3)/2*size(USdat,4)*size(USdat,6)/nnz(USdat); % account for zero-fill
-	                Rfactor = size(USdat,1)*114*72*size(USdat,4)*size(USdat,6)/nnz(USdat); % account for zero-fill
-	                acqtime = datestr(seconds(114*72*1.252/Rfactor),'MM:SS ') % TR1277->10245 TR1252->10045
+	                Rfactor = size(USdat,1)*114*72*size(USdat,4)*size(USdat,6)/nnz(USdat); % *UPDATE FOR CORD* account for zero-fill
+	                acqtime = datestr(seconds(114*72*1.252/Rfactor),'MM:SS ') % *UPDATE FOR CORD* TR1277->10245 TR1252->10045
 	                Rfactor = num2str(Rfactor,3)
 
 	                % ----- Generate sampling image before clear (from ACTUAL k-space data, after masking)
@@ -790,20 +749,20 @@ function SockeyeCluster_CALIPR_Philips_Brain_FullProcess(fulldat_names)
 
 	                % FFT ZF recon comparison for US data
 	%                 USfft = squeeze(bart('rss 8',bart('fft -u -i 6',USdat)));
-	                
+
 	                disp('BATCH USfft generation')
 	                for batch_id = 0:nbatches-1
 	%                     USfft(1+(batch_id*batchsize):1+(batch_id*batchsize)+batchsize-1,:,:,:) = squeeze(bart('rss 8',bart('fft -u -i 6',USdat(1+(batch_id*batchsize):1+(batch_id*batchsize)+batchsize-1,:,:,:,:,:))));
 	                    % QUIET+SINGLE VERSION
 	                    evalc('USfft(1+(batch_id*batchsize):1+(batch_id*batchsize)+batchsize-1,:,:,:) = single(squeeze(bart(''rss 8'',bart(''fft -u -i 6'',USdat(1+(batch_id*batchsize):1+(batch_id*batchsize)+batchsize-1,:,:,:,:,:)))));');
 	                end
-	                
+
 	%                 % FOR ONE SLICE ONLY
 	%                 USfft = permute(USfft, [ 4 1 2 3 ]);
 	%                 save('USfft.mat', 'USfft');
 
 	                evalc('USfft_norm = bart(''normalize 15'', USfft);');
-	                
+
 
 	                % put slices in SLICE dimension 14, echoes in TE (6th)
 	                USdat = permute(USdat, [ 14 2 3 4 5 6 7 8 9 10 11 12 13 1 ]); % size(USdat)
@@ -839,7 +798,7 @@ function SockeyeCluster_CALIPR_Philips_Brain_FullProcess(fulldat_names)
 	                    RECONdirstr = string(string(cmd_pics_clean) + 'K_' + string(K));
 	                    mkdir(RECONdirstr);
 	                    cd(RECONdirstr);
-	                    
+
 	%                     % -------- PI ALL VERSION
 	%                     USdat(:,2:2:end,:,:,:,:) = 0;
 	%                     % -------- CROPPED VERSION
@@ -865,37 +824,37 @@ function SockeyeCluster_CALIPR_Philips_Brain_FullProcess(fulldat_names)
 	%     %                 disp('Size of output'); size(pics_mas_8ch_noSqueeze)
 
 	                    % --- BATCH MODE
-	                    
+
 	%                     pics_mas_8ch_noSqueeze = permute( zeros(size(Eall,1),size(Eall,2),size(Eall,3),1,size(FSsensmaps,5),size(Eall,6)), [ 14 2 3 4 5 6 7 8 9 10 11 12 13 1 ]);
 	                    % SINGLE VERSION
 	                    pics_mas_8ch_noSqueeze = single(permute( zeros(size(Eall,1),size(Eall,2),size(Eall,3),1,size(FSsensmaps,5),size(Eall,6)), [ 14 2 3 4 5 6 7 8 9 10 11 12 13 1 ]));
-	                    
-	                    
+
+
 	%                     size(pics_mas_8ch_noSqueeze)
-	                    
+
 	                    % --- BATCH MODE
 	                    disp('BATCH UScs generation')
-	                    
+
 	                    for batch_id = 0:nbatches-1
 	%                         disp('BATCH:')
 	%                         batch_id
-	                        
+
 	%                         batch_USdat = USdat(:,:,:,:,:,:,:,:,:,:,:,:,:,1+(batch_id*batchsize):1+(batch_id*batchsize)+batchsize-1);
 	%                         batch_FSsensmaps = FSsensmaps(:,:,:,:,:,:,:,:,:,:,:,:,:,1+(batch_id*batchsize):1+(batch_id*batchsize)+batchsize-1);
 	%                         size(batch_USdat)
 	%                         size(batch_FSsensmaps)
-	                        
-	                        
+
+
 	% %                         size(pics_mas_8ch_noSqueeze(:,:,:,:,:,:,:,:,:,:,:,:,:,1+(batch_id*batchsize):1+(batch_id*batchsize)+batchsize-1))
 	%                         out_pics_mas_8ch = evalc( 'pics_mas_8ch_noSqueeze(:,:,:,:,:,:,:,:,:,:,:,:,:,1+(batch_id*batchsize):1+(batch_id*batchsize)+batchsize-1) = bart(''' + string(cmd_pics) + ''',batch_USdat, batch_FSsensmaps);' )
 	%                         out_pics_mas_8ch = evalc( 'batch_pics_mas_8ch_noSqueeze = bart(''' + string(cmd_pics) + ''',batch_USdat, batch_FSsensmaps);' )
 	%                         pics_mas_8ch_noSqueeze(:,:,:,:,:,:,:,:,:,:,:,:,:,1+(batch_id*batchsize):1+(batch_id*batchsize)+batchsize-1) = batch_pics_mas_8ch_noSqueeze;
 	%                         clear batch_pics_mas_8ch_noSqueeze
-	                        
+
 	%                         out_pics_mas_8ch = evalc( 'pics_mas_8ch_noSqueeze(:,:,:,:,:,:,:,:,:,:,:,:,:,1+(batch_id*batchsize):1+(batch_id*batchsize)+batchsize-1) = bart(''' + string(cmd_pics) + ''',USdat(:,:,:,:,:,:,:,:,:,:,:,:,:,1+(batch_id*batchsize):1+(batch_id*batchsize)+batchsize-1), FSsensmaps(:,:,:,:,:,:,:,:,:,:,:,:,:,1+(batch_id*batchsize):1+(batch_id*batchsize)+batchsize-1));' )
 	                        % QUIET AND SINGLE VERSION
 	                        out_pics_mas_8ch = evalc( 'pics_mas_8ch_noSqueeze(:,:,:,:,:,:,:,:,:,:,:,:,:,1+(batch_id*batchsize):1+(batch_id*batchsize)+batchsize-1) = single(bart(''' + string(cmd_pics) + ''',USdat(:,:,:,:,:,:,:,:,:,:,:,:,:,1+(batch_id*batchsize):1+(batch_id*batchsize)+batchsize-1), FSsensmaps(:,:,:,:,:,:,:,:,:,:,:,:,:,1+(batch_id*batchsize):1+(batch_id*batchsize)+batchsize-1)));' );
-	                        
+
 	%                         out_pics_mas_8ch = evalc( 'tmp = bart(''' + string(cmd_pics) + ''',USdat(:,:,:,:,:,:,:,:,:,:,:,:,:,1+(batch_id*batchsize):1+(batch_id*batchsize)+batchsize-1), FSsensmaps(:,:,:,:,:,:,:,:,:,:,:,:,:,1+(batch_id*batchsize):1+(batch_id*batchsize)+batchsize-1));' )
 	%                         size(tmp)
 	                    end
@@ -919,7 +878,7 @@ function SockeyeCluster_CALIPR_Philips_Brain_FullProcess(fulldat_names)
 	                    clear pics_mas_8ch_noSqueeze 
 
 	                    save('UScs.mat', 'UScs', '-v7.3', '-nocompression');
-	                    
+
 	                    toc
 	                    disp('Done CS Recon')
 
@@ -933,13 +892,17 @@ function SockeyeCluster_CALIPR_Philips_Brain_FullProcess(fulldat_names)
 
 	                        % ----- IF NOT RUNNING
 	                        load('UScs.mat');
-	                        % UScs = abs(UScs);
+	%                         UScs = abs(UScs);
 
 	                        % ----------------- CS
 	                        clear tmpMR
 	                        tmpMR = MRecon(dat_labfile, dat_rawfile);
 	                        tmpMR.Parameter.Parameter2Read.typ = [ 1 ]; % read in standard data (1) phase correction data (3) noise data (5)
 	                        tmpMR.Parameter.Parameter2Read.Update;
+	                        
+	                        % FOR CORD, extra slice zerofill
+	                        tmpMR.Parameter.Encoding.ZRes = 24+zeros(48,1);
+	                        tmpMR.Parameter.Encoding.ZReconRes = 24+zeros(48,1);
 
 	                        tmpMR.Data = bart('flip 6', abs(UScs)); % 
 	                        tmpMR.Data = permute( tmpMR.Data, [ 1 2 3 5 6 7 4 ]);
@@ -980,14 +943,21 @@ function SockeyeCluster_CALIPR_Philips_Brain_FullProcess(fulldat_names)
 
 	                        tmpMR.WritePar( [ 'CS.par' ] );
 	                        tmpMR.WriteRec( [ 'CS.rec' ] );
+	                        !source /home/bizon/.bashrc
 	                        !dcm2niix -b n -m y -s y -p y -v n -z y -w 1 -f CS CS.par >/dev/null
-	                        !fslmerge -t CS.nii.gz $( for i in {1..56}; do printf "CS_e${i}.nii.gz "; done )
+	                        !fslmerge -t CS.nii.gz $( for i in {1..48}; do printf "CS_e${i}.nii.gz "; done )
 	                        !mv CS_e1.nii.gz CS_E1.nii.gz
+	                        !mv CS_e24.nii.gz CS_E24.nii.gz
+	                        !mv CS_e48.nii.gz CS_E48.nii.gz
 	                        !rm CS_e*.nii.gz
 
-	                        !antsBrainExtraction.sh -d 3 -k 0 -z 0 -a CS_E1.nii.gz -e /project/st-kolind-1/Templates/OASIS/T_template0.nii.gz -m /project/st-kolind-1/Templates/OASIS/T_template0_BrainCerebellumProbabilityMask.nii.gz -f /project/st-kolind-1/Templates/OASIS/T_template0_BrainCerebellumRegistrationMask.nii.gz -o CS_E1 &>/dev/null
+	                        !sct_version
+	                        !sct_deepseg_sc -i CS_E24.nii.gz -c t2 -o CS_seg.nii.gz &>/dev/null
+	%                                     -qc /home/bizon/Research/SCT_QC   &>/dev/null
+	                        !fslmaths CS_seg.nii.gz -dilF -dilF CS_seg_dil.nii.gz
+
 	                        !gunzip CS.nii.gz
-	                        !gunzip CS_E1BrainExtractionMask.nii.gz
+	                        !gunzip CS_seg_dil.nii.gz
 	                        clear tmpMR
 	                    end
 
@@ -1020,8 +990,8 @@ function SockeyeCluster_CALIPR_Philips_Brain_FullProcess(fulldat_names)
 	                    figure(), imshow([ USfft_img UScs_phase UScs_img1 UScs_img4 UScs_img10 UScs_img28 ], scale_MWF,'InitialMagnification','fit');
 	                    title({'USfft | UScs Phase | UScs E1/E4/E10/E28 ', 'Acceleration R = ' + string(Rfactor) + '    K: ' + string(K) + '  MaskID: ' + num2str(mas_id), ' PICS: ' + string(cmd_pics) })
 	                    print('UScs_Echoes', '-dpng', '-r600');
-	                    
-	                    
+
+
 	                    % Axial views
 	                    evalc('UScs_img1_1 = (scale_MWF(2)/imwindow(2))*bart(''normalize 7'', squeeze(abs(UScs(:,:,view_slices_ax(1)+ax_shift,1))));');
 	                    evalc('UScs_img1_2 = (scale_MWF(2)/imwindow(2))*bart(''normalize 7'', squeeze(abs(UScs(:,:,view_slices_ax(2)+ax_shift,1))));');
@@ -1065,7 +1035,7 @@ function SockeyeCluster_CALIPR_Philips_Brain_FullProcess(fulldat_names)
 
 	                end
 	                % ------------------------------------------------ END CS RECON ------------------------------------------------            
-	                
+
 	                % ------------------------------------------------------------------------
 	                % ------------------ START CALIPR BASIS SET CALIBRATION ------------------
 	                if run_CALIPRrecon == 1
@@ -1083,7 +1053,7 @@ function SockeyeCluster_CALIPR_Philips_Brain_FullProcess(fulldat_names)
 	                        Dat = UScs;
 	%                         Dat = UScs(:,70-20:70+20,:,:);
 	%                         Dat = bart('homodyne -I 0 1', UScs);
-	                        
+
 	%                         % ----------- N4 Bias Field Correction
 	%                         UStmp = Dat;
 
@@ -1110,15 +1080,15 @@ function SockeyeCluster_CALIPR_Philips_Brain_FullProcess(fulldat_names)
 	%                         % UScalipr = UStmp;
 	%                         % size(UStmp)
 	%                         % -----------
-	                        
-	                        
+
+
 	                        % -------------------------------------------------------------
 	                    else % all others use tinydat   
 	                        % ------------------------------------------------------------- CREATE tinyUSdat, option to create tinyFSsensmaps, option to crop for matching data across echo train
 	%                         tinyUSdat = bart('resize -c 1 8 2 8', bart('resize -c 1 8 2 8', permute(USdat, [ 14 2 3 4 5 6 7 8 9 10 11 12 13 1 ]))); % resize twice for zero-fill, if desired
 	%                         tinyUSdat = bart('resize -c 1 118 2 15', bart('resize -c 1 118 2 15', permute(USdat, [ 14 2 3 4 5 6 7 8 9 10 11 12 13 1 ]))); % resize twice for zero-fill, if desired
 	                        tinyUSdat = permute(USdat, [ 14 2 3 4 5 6 7 8 9 10 11 12 13 1 ]);
-	                        
+
 	                        if (strcmp(calibrate_dat, 'tinyUScs') || strcmp(calibrate_dat, 'tinyUSfft_fmac'))
 	                            % --------------------------------- CALCULATE ESPIRiT SLICEWISE
 	                            tinyEksp = tinyUSdat(:,:,:,:,:,1);
@@ -1157,16 +1127,16 @@ function SockeyeCluster_CALIPR_Philips_Brain_FullProcess(fulldat_names)
 	                            disp(sprintf('After calibration  data matching across echoes:  %u', nnz(tinyUSdat(:))))
 	                            % ---------------------------------
 	                       end
-	                       
+
 	%                        % To match PI for all:
 	%                         tinyUSdat(:,1:2:end,:,:,:,:) = 0;
-	                        
+
 	                        figure, imshow( [ squeeze(abs(tinyUSdat(2,:,:,4,1,1))).^0.1 squeeze(abs(tinyUSdat(2,:,:,4,1,2))).^0.1 squeeze(abs(tinyUSdat(2,:,:,4,1,3))).^0.1 squeeze(abs(tinyUSdat(2,:,:,4,1,4))).^0.1] , [],'InitialMagnification','fit')
 	                        title('tinyUSdat')
 	                        % ------------------------------------------------------------- 
 
 	                        if strcmp(calibrate_dat, 'tinyUScs')
-	                        
+
 	                            % ------------------------------------------------------------- USE tinyUScs FOR CALIBRATION: perform pics recon (requires tinyFSsensmaps)
 	                            tinyUSdat = permute(tinyUSdat, [ 14 2 3 4 5 6 7 8 9 10 11 12 13 1 ]);
 	                            tinyFSsensmaps = permute(tinyFSsensmaps, [ 14 2 3 4 5 6 7 8 9 10 11 12 13 1 ]);
@@ -1279,14 +1249,14 @@ function SockeyeCluster_CALIPR_Philips_Brain_FullProcess(fulldat_names)
 	                    datU_ALL(:,:,6) = abs(datU_cpx);
 	                    datU_ALL(:,:,7) = datU_comb;
 	                    datU_ALL(:,:,8) = datU_apnd;
-	                    
+
 	                    toc
 	                    disp('Done CALIPR Basis Set Calibration ')
 
 	                end
 	                % ------------------ END CALIPR BASIS SET CALIBRATION ------------------
 	                % ----------------------------------------------------------------------
-	                
+
 	                % ------------------------------------------------ BEGINLOOP ------------------------------------------------
 	                for cell_cmd_pics = ALL_cmd_pics
 	                    % ---------------------------------------------- START KVAL LOOP ----------------------------------------------
@@ -1312,7 +1282,7 @@ function SockeyeCluster_CALIPR_Philips_Brain_FullProcess(fulldat_names)
 
 
 	                                % ----------------- View Temporal Basis
-	                                xlims = [1 56];
+	                                xlims = [1 48];
 	                                ylims = [-0.8 0.8];
 
 	                                if show_subspace == 1
@@ -1397,16 +1367,16 @@ function SockeyeCluster_CALIPR_Philips_Brain_FullProcess(fulldat_names)
 	%                                 % ------ OVERWRITE WITH PICS COMMAND, FOR CHANGING CS RECON COMMAND
 	%                                 out_pics_mas_8ch = evalc( 'pics_mas_8ch_noSqueeze = bart(''' + string(cmd_pics) + string(' -B Phi_save ') + ''',USdat, FSsensmaps);' )
 	%             %                     disp('Size of output'); % size(pics_mas_8ch_noSqueeze)
-	            
+
 	                                pics_mas_8ch_noSqueeze = single(permute( zeros(size(USdat,14),size(USdat,2),size(USdat,3),1,size(FSsensmaps,5),1,K), [ 14 2 3 4 5 6 7 8 9 10 11 12 13 1 ]));
-	                    
+
 	                                % --- BATCH MODE
 	                                disp('BATCH UScalipr generation')
 
 	                                for batch_id = 0:nbatches-1
 	%                                     disp('BATCH:')
 	%                                     batch_id
-	                                    
+
 	            %                         batch_USdat = USdat(:,:,:,:,:,:,:,:,:,:,:,:,:,1+(batch_id*batchsize):1+(batch_id*batchsize)+batchsize-1);
 	            %                         batch_FSsensmaps = FSsensmaps(:,:,:,:,:,:,:,:,:,:,:,:,:,1+(batch_id*batchsize):1+(batch_id*batchsize)+batchsize-1);
 	            %                         size(batch_USdat)
@@ -1426,7 +1396,7 @@ function SockeyeCluster_CALIPR_Philips_Brain_FullProcess(fulldat_names)
 	            %                         out_pics_mas_8ch = evalc( 'tmp = bart(''' + string(cmd_pics) + ''',USdat(:,:,:,:,:,:,:,:,:,:,:,:,:,1+(batch_id*batchsize):1+(batch_id*batchsize)+batchsize-1), FSsensmaps(:,:,:,:,:,:,:,:,:,:,:,:,:,1+(batch_id*batchsize):1+(batch_id*batchsize)+batchsize-1));' )
 	            %                         size(tmp)
 	                                end
-	            
+
 
 	                                % put slices back in READOUT (1) from SLICE dimension (14)
 	                                pics_mas_8ch_noSqueeze = permute(pics_mas_8ch_noSqueeze, [ 14 2 3 4 5 6 7 8 9 10 11 12 13 1 ]); % size(pics_mas_8ch_noSqueeze)
@@ -1444,10 +1414,10 @@ function SockeyeCluster_CALIPR_Philips_Brain_FullProcess(fulldat_names)
 	                                % Project temporal basis to image space
 	                                UScalipr = Phi_sq * reshape(pics_mas_8ch, size(pics_mas_8ch,1)*size(pics_mas_8ch,2)*size(pics_mas_8ch,3),size(Phi_sq,2)).';
 	                                UScalipr = reshape(UScalipr.', size(pics_mas_8ch,1), size(pics_mas_8ch,2), size(pics_mas_8ch,3), size(Phi_sq,1));
-	                                
+
 	                                clear pics_mas_8ch_noSqueeze % save pics_mas_8ch to make coeff images
-	                                
-	                                % UScalipr = abs(UScalipr);
+
+	%                                 UScalipr = abs(UScalipr);
 	                                save('UScalipr.mat', 'UScalipr', '-v7.3', '-nocompression');
 	                                save('UScalipr_Phi.mat', 'Phi', '-v7.3', '-nocompression');
 
@@ -1457,10 +1427,10 @@ function SockeyeCluster_CALIPR_Philips_Brain_FullProcess(fulldat_names)
 	                                toc
 	                                disp('Done CALIPR Recon')
 	                                % ------------------ END NOT RUNNING ------------------
-	                                
+
 	                                if save_calipr_nii == 1
 	                                    disp('Generating and Saving Par/Rec Files')
-	                                    
+
 	                                    % ----- IF NOT RUNNING
 	                                    load('UScalipr.mat');
 
@@ -1469,6 +1439,10 @@ function SockeyeCluster_CALIPR_Philips_Brain_FullProcess(fulldat_names)
 	                                    tmpMR = MRecon(dat_labfile, dat_rawfile);
 	                                    tmpMR.Parameter.Parameter2Read.typ = [ 1 ]; % read in standard data (1) phase correction data (3) noise data (5)
 	                                    tmpMR.Parameter.Parameter2Read.Update;
+	                                    
+	                                    % FOR CORD, extra slice zerofill
+	                                    tmpMR.Parameter.Encoding.ZRes = 24+zeros(48,1);
+	                                    tmpMR.Parameter.Encoding.ZReconRes = 24+zeros(48,1);
 
 	                                    tmpMR.Data = bart('flip 6', abs(UScalipr)); % 
 	                                    tmpMR.Data = permute( tmpMR.Data, [ 1 2 3 5 6 7 4 ]);
@@ -1510,18 +1484,23 @@ function SockeyeCluster_CALIPR_Philips_Brain_FullProcess(fulldat_names)
 	                                    tmpMR.WritePar( [ 'CALIPR.par' ] );
 	                                    tmpMR.WriteRec( [ 'CALIPR.rec' ] );
 	                                    !dcm2niix -b n -m y -s y -p y -v n -z y -w 1 -f CALIPR CALIPR.par >/dev/null
-	                                    !fslmerge -t CALIPR.nii.gz $( for i in {1..56}; do printf "CALIPR_e${i}.nii.gz "; done )
+	                                    !fslmerge -t CALIPR.nii.gz $( for i in {1..48}; do printf "CALIPR_e${i}.nii.gz "; done )
 	                                    !mv CALIPR_e1.nii.gz CALIPR_E1.nii.gz
+	                                    !mv CALIPR_e24.nii.gz CALIPR_E24.nii.gz
+	                                    !mv CALIPR_e48.nii.gz CALIPR_E48.nii.gz
 	                                    !rm CALIPR_e*.nii.gz
+
+	                                    !sct_version
+	                                    !sct_deepseg_sc -i CALIPR_E24.nii.gz -c t2 -o CALIPR_seg.nii.gz &>/dev/null
+	%                                     -qc /home/bizon/Research/SCT_QC   &>/dev/null
+	                                    !fslmaths CALIPR_seg.nii.gz -dilF -dilF CALIPR_seg_dil.nii.gz
 	                                    
-	                                    !antsBrainExtraction.sh -d 3 -k 0 -z 0 -a CALIPR_E1.nii.gz -e /project/st-kolind-1/Templates/OASIS/T_template0.nii.gz -m /project/st-kolind-1/Templates/OASIS/T_template0_BrainCerebellumProbabilityMask.nii.gz -f /project/st-kolind-1/Templates/OASIS/T_template0_BrainCerebellumRegistrationMask.nii.gz -o CALIPR_E1 &>/dev/null
 	                                    !gunzip CALIPR.nii.gz
-	                                    !gunzip CALIPR_E1BrainExtractionMask.nii.gz
+	                                    !gunzip CALIPR_seg_dil.nii.gz
 	                                    clear tmpMR
 	                                end
-	                                
 
-	                                
+
 	                                evalc('USfft_img = (scale_MWF(2)/imwindow(2))*bart(''normalize 7'', squeeze(abs(USfft(view_slice,:,:,1))));');
 	                                evalc('UScalipr_img1 = (scale_MWF(2)/imwindow(2))*bart(''normalize 7'', squeeze(abs(UScalipr(view_slice,:,:,1))));');
 	                                evalc('UScalipr_img4 = (scale_MWF(2)/imwindow(2))*bart(''normalize 7'', squeeze(abs(UScalipr(view_slice,:,:,4))));');
@@ -1548,7 +1527,7 @@ function SockeyeCluster_CALIPR_Philips_Brain_FullProcess(fulldat_names)
 	                            end
 	                        end
 	                        % ---------------------------------------------- END CALIPR RECON ----------------------------------------------
-	                        
+
 	                        % ---------------------------------------------- START MWI ANALYSIS ----------------------------------------------
 	                        if analyseMWI == 1
 	                            disp('Beginning MWI Analysis ')
@@ -1567,7 +1546,7 @@ function SockeyeCluster_CALIPR_Philips_Brain_FullProcess(fulldat_names)
 	%         %                         RECONdirstr = string(string(cmd_pics_clean) + 'K_' + string(K)) + '_CALIPR';
 	%         %                         mkdir(RECONdirstr); cd(RECONdirstr);
 	%                                 datU = datU_ALL(:,:,bid);
-	                                
+
 	                                %----- TEMPORARY TO SAVE MEMORY: Clear largest files not needed (for not looping multiple recons) to make space for DKspat
 	                                % USdat largest in memory but needed, temporarily write to file
 	                                USdat = single(USdat);
@@ -1581,7 +1560,7 @@ function SockeyeCluster_CALIPR_Philips_Brain_FullProcess(fulldat_names)
 
 	                                % ----- Updated DK_nii_NNLS analysis
 	                                delete(gcp('nocreate')) % resolves occasional issues with matlab parpool
-	                                DK_nii_NNLS('CALIPR.nii', 'CALIPR_E1BrainExtractionMask.nii', Resol, TE, TR, T2Range, spwin, nT2, nCores, nThreads, FAE_in_fin_step, RegType, nSpatIter, Size_DSW, Overlap_DSW, SpatRegOpt, SpatRegSetAlpha, SpatReg_Init_FA, SpatReg_Init_T2)
+	                                DK_nii_NNLS('CALIPR.nii', 'CALIPR_seg_dil.nii', Resol, TE, TR, T2Range, spwin, nT2, nCores, nThreads, FAE_in_fin_step, RegType, nSpatIter, Size_DSW, Overlap_DSW, SpatRegOpt, SpatRegSetAlpha, SpatReg_Init_FA, SpatReg_Init_T2)
 
 	                                %--- Add USdat back into memory, post-MWI analysis
 	                                load('tmp_USdat');
@@ -1637,7 +1616,7 @@ function SockeyeCluster_CALIPR_Philips_Brain_FullProcess(fulldat_names)
 
 	                                    copyfile('CALIPR.nii', [ string(dat_name) + '.nii' ]);
 
-	                                    nii = load_untouch_nii('CALIPR_E1BrainExtractionMask.nii');
+	                                    nii = load_untouch_nii('CALIPR_seg_dil.nii');
 
 	                                    % BART flip fixes LR flip when loading into matlab
 	%                                     nii.img = bart('flip ', UScalipr_MWF);
