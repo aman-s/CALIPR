@@ -8,7 +8,7 @@ function SockeyeCluster_CALIPR_Philips_Brain_FullProcess(fulldat_names)
 	% 	};
 	% 	SockeyeCluster_CALIPR_Philips_Brain_FullProcess( fulldat_names );
 	% Or input directly as:
-	% 	SockeyeCluster_CALIPR_Philips_Brain_FullProcess( {...
+	% 	SockeyeCluster_CALIPR_Philips_Brain_FullProcess( 	...
 	% 	'/home/bizon/Research/MWI_Development/CALIPR/CALIPR_Publication_Share/CALIPR_Code/test_calipr_repro_c05_calipr_brain_1.raw',...
 	% 	'/home/bizon/Research/MWI_Development/Data/Wilman_D_YEG/Wilman_D_YEG_calipr_brain_1.raw',... 
 	% 	} );
@@ -59,22 +59,22 @@ function SockeyeCluster_CALIPR_Philips_Brain_FullProcess(fulldat_names)
 	oasis_template_path = '/home/amanstaf/templates/oasis/MICCAI2012-Multi-Atlas-Challenge-Data'; %/project/st-kolind-1/Templates/OASIS
 
 	% Connect:
-	>> c = parcluster;
+	c = parcluster;
 	% Specify our allocation (!Required):
-	>> c.AdditionalProperties.AllocationCode = 'st-kolind-1';
+	c.AdditionalProperties.AllocationCode = 'st-kolind-1';
 
 	% OPTIONAL SETTINGS
 	% Specify number of GPUs and memory
-	>> c.AdditionalProperties.GpuMem = '32gb';
-	>> c.AdditionalProperties.GpusPerNode = 1;
+	c.AdditionalProperties.GpuMem = '32gb';
+	c.AdditionalProperties.GpusPerNode = 1;
 	% Specify job placement flexibility (in this case each worker can run on any node, not requiring a specific one):
-	>> c.AdditionalProperties.JobPlacement = 'free';
-	>> c.AdditionalProperties.RequireExclusiveNode = false;
+	c.AdditionalProperties.JobPlacement = 'free';
+	c.AdditionalProperties.RequireExclusiveNode = false;
 	% Specify memory to use for MATLAB jobs, per core
 	% Max 24 CPU cores and 192GB RAM (8GB/core)
-	>> c.AdditionalProperties.MemUsage = '6000mb'
+	c.AdditionalProperties.MemUsage = '6000mb'
 	% Request 24 procs per node (instead of default 8)
-	>> c.AdditionalProperties.ProcsPerNode = 24;
+	c.AdditionalProperties.ProcsPerNode = 24;
 	% Specify the walltime (e.g. 1 Hour)
 	% >> c.AdditionalProperties.WallTime = '01:00:00';
 
