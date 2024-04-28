@@ -56,6 +56,8 @@ function SockeyeCluster_CALIPR_Philips_Brain_FullProcess(fulldat_names)
 	% ------------------------------------------------------------------------------  SETUP COMPUTE CLUSTER FOR MATLAB
 	% REQUIRED SETTINGS
 	
+	oasis_template_path = '/home/amanstaf/templates/oasis/MICCAI2012-Multi-Atlas-Challenge-Data'; %/project/st-kolind-1/Templates/OASIS
+
 	% Connect:
 	>> c = parcluster;
 	% Specify our allocation (!Required):
@@ -84,8 +86,9 @@ function SockeyeCluster_CALIPR_Philips_Brain_FullProcess(fulldat_names)
 
 
 	% --------------------------------------- BART TOOLBOX SETTINGS
-	addpath(fullfile('/arc/software/spack-2023/opt/spack/linux-centos7-skylake_avx512/gcc-9.4.0/bart-0.7.00-en3t3cfmmfbdv2xxzo4d2xnlwpvsw6rs', 'matlab'));
-	setenv('TOOLBOX_PATH', '/arc/software/spack-2023/opt/spack/linux-centos7-skylake_avx512/gcc-9.4.0/bart-0.7.00-en3t3cfmmfbdv2xxzo4d2xnlwpvsw6rs');
+	%addpath(fullfile('/arc/software/spack-2023/opt/spack/linux-centos7-skylake_avx512/gcc-9.4.0/bart-0.7.00-en3t3cfmmfbdv2xxzo4d2xnlwpvsw6rs', 'matlab'));
+	%setenv('TOOLBOX_PATH', '/arc/software/spack-2023/opt/spack/linux-centos7-skylake_avx512/gcc-9.4.0/bart-0.7.00-en3t3cfmmfbdv2xxzo4d2xnlwpvsw6rs');
+	addpath("/project/st-kolind-1/aman_bart/bart-matlab-integration-sockeye-cluster/")
 	disp('BART Verson info:'); bart('version -V')
 	setenv('OMP_NUM_THREADS','24'); % set based on SLURM job settings
 	% export DEBUG_LEVEL=5 % for BART debugging
@@ -1010,7 +1013,7 @@ function SockeyeCluster_CALIPR_Philips_Brain_FullProcess(fulldat_names)
 	                        !mv CS_e1.nii.gz CS_E1.nii.gz
 	                        !rm CS_e*.nii.gz
 
-	                        !antsBrainExtraction.sh -d 3 -k 0 -z 0 -a CS_E1.nii.gz -e /project/st-kolind-1/Templates/OASIS/T_template0.nii.gz -m /project/st-kolind-1/Templates/OASIS/T_template0_BrainCerebellumProbabilityMask.nii.gz -f /project/st-kolind-1/Templates/OASIS/T_template0_BrainCerebellumRegistrationMask.nii.gz -o CS_E1 &>/dev/null
+	                        system(sprintf("antsBrainExtraction.sh -d 3 -k 0 -z 0 -a CS_E1.nii.gz -e %s/T_template0.nii.gz -m %s/T_template0_BrainCerebellumProbabilityMask.nii.gz -f %s/T_template0_BrainCerebellumRegistrationMask.nii.gz -o CS_E1 &>/dev/null",oasis_template_path,oasis_template_path,oasis_template_path))
 	                        !gunzip CS.nii.gz
 	                        !gunzip CS_E1BrainExtractionMask.nii.gz
 	                        clear tmpMR
@@ -1539,7 +1542,7 @@ function SockeyeCluster_CALIPR_Philips_Brain_FullProcess(fulldat_names)
 	                                    !mv CALIPR_e1.nii.gz CALIPR_E1.nii.gz
 	                                    !rm CALIPR_e*.nii.gz
 	                                    
-	                                    !antsBrainExtraction.sh -d 3 -k 0 -z 0 -a CALIPR_E1.nii.gz -e /project/st-kolind-1/Templates/OASIS/T_template0.nii.gz -m /project/st-kolind-1/Templates/OASIS/T_template0_BrainCerebellumProbabilityMask.nii.gz -f /project/st-kolind-1/Templates/OASIS/T_template0_BrainCerebellumRegistrationMask.nii.gz -o CALIPR_E1 &>/dev/null
+	                                    system(sprintf("antsBrainExtraction.sh -d 3 -k 0 -z 0 -a CALIPR_E1.nii.gz -e %s/T_template0.nii.gz -m %s/T_template0_BrainCerebellumProbabilityMask.nii.gz -f %s/T_template0_BrainCerebellumRegistrationMask.nii.gz -o CALIPR_E1 &>/dev/null",oasis_template_path,oasis_template_path,oasis_template_path))
 	                                    !gunzip CALIPR.nii.gz
 	                                    !gunzip CALIPR_E1BrainExtractionMask.nii.gz
 	                                    clear tmpMR
